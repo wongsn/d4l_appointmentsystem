@@ -2,7 +2,7 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import initializeApollo from '../lib/apollo'
 import { useEffect, useState } from 'react'
-import { gql, useLazyQuery, useMuitation, useSubscription } from '@apollo/client'
+import { gql, useLazyQuery, useQuery, useMutation, useSubscription } from '@apollo/client'
 import { Button, Container, Grid, Item, Stack, Typography } from '@mui/material'
 import MakeAppt from '../components/MakeAppt'
 import ApptTable from '../components/ApptTable'
@@ -10,9 +10,9 @@ import PatientCombo from '../components/PatientCombo'
 import DoctorCombo from '../components/DoctorCombo'
 import DateCombo from '../components/DateCombo'
 import UploadFile from '../components/UploadFile'
+import { GET_PATIENTS, GET_APPTS, GET_DOCTORS } from '../lib/queryParams'
 
-
-const Home = ({ patientData, doctorData }) => {
+const Home = () => {
   const [ selectedDoctorName, setSelectedDoctorName ] = useState("")
   const [ selectedPatientName, setSelectedPatientName ] = useState("")
   const [ selectedPatientQuery, setSelectedPatientQuery ] = useState("")
@@ -29,24 +29,11 @@ const Home = ({ patientData, doctorData }) => {
         }
       }
 
-  const GET_APPTS = gql`
-    query getAppointments($params: appointment_bool_exp!) {
-      appointment(where: $params) {
-        appointment_id
-        appt_datetime
-        consulting_doctor
-        doctorByConsultingDoctor {
-          doctor_id
-          doctor_name
-        }
-        visiting_patient
-        patientByVisitingPatient {
-          patient_name
-          patient_age
-          patient_gender
-        }
-      }
-    }`
+  
+
+    const { data: patientData, loading: patientLoading, error: patientError } = useQuery(GET_PATIENTS)
+
+    const { data: doctorData, loading: doctorLoading, error: doctorError } = useQuery(GET_DOCTORS) 
 
 
     const [ loadAppointments, { called, loading: apptLoading , error: apptError, data: apptData}] = useLazyQuery(GET_APPTS, queryOptions)
@@ -133,34 +120,20 @@ const Home = ({ patientData, doctorData }) => {
 
 export const getStaticProps = async ({ params}) => {
 
-  console.log(`Building: ${params}`)
   const client = initializeApollo()
-  const { data: doctorData } = await client.query({
-    query: gql`query getDoctors {
-      doctor {
-        doctor_id
-        doctor_name
-      }
-    }`
+
+  await client.query({
+    query: GET_DOCTORS
   })
 
-  const { data: patientData } = await client.query({
-    query: gql`query getPatients {
-      patient {
-        patient_id
-        patient_name
-        patient_age
-        patient_gender
-      }
-    }`
+  await client.query({
+    query: GET_PATIENTS
   })
 
 
   return {
     props: {
       initialApolloState: client.cache.extract(),
-      patientData,
-      doctorData
     },
     revalidate: 1,
   }

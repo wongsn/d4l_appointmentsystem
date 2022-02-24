@@ -5,7 +5,7 @@ import { useApollo } from '../lib/apollo'
 
 function MyApp({ Component, pageProps }) {
 
-  const [client] = useState(useApollo(pageProps.initialApolloProps))
+  const [client] = useState(useApollo(pageProps.initialApolloState))
   
   
   return (
