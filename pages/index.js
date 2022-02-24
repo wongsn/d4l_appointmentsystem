@@ -128,6 +128,7 @@ const Home = () => {
 
 export const getStaticProps = async ({ params}) => {
 
+  console.log(params)
   const client = initializeApollo()
 
   await client.query({
