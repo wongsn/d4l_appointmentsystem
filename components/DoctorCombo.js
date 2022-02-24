@@ -4,8 +4,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 
 export const DoctorCombo = ({ data, selected, setDoctor, query }) => {
 
-  const doctorData = data.doctor
-  const optionsArray = doctorData.map(data => {
+  const doctorData = data?.doctor
+  const optionsArray = doctorData?.map(data => {
     return `${data.doctor_name} (${data.doctor_id})`
   })
   const changeDoctor = (ev, newValue) => {

@@ -13,11 +13,11 @@ import UploadFile from '../components/UploadFile'
 import { GET_PATIENTS, GET_APPTS, GET_DOCTORS } from '../lib/queryParams'
 
 const Home = () => {
-  const [ selectedDoctorName, setSelectedDoctorName ] = useState("")
-  const [ selectedPatientName, setSelectedPatientName ] = useState("")
-  const [ selectedPatientQuery, setSelectedPatientQuery ] = useState("")
-  const [ selectedDoctorQuery, setSelectedDoctorQuery ] = useState("")
-  const [ selectedDateTime, setSelectedDateTime ] = useState(new Date())
+  const [ selectedDoctorName, setSelectedDoctorName ] = useState()
+  const [ selectedPatientName, setSelectedPatientName ] = useState()
+  const [ selectedPatientQuery, setSelectedPatientQuery ] = useState()
+  const [ selectedDoctorQuery, setSelectedDoctorQuery ] = useState()
+  const [ selectedDate, setSelectedDate ] = useState(new Date())
 
   // const [ apptData, setApptData] = useState([])
   // const [ apptLoading, setApptLoading ] = useState()
@@ -31,12 +31,13 @@ const Home = () => {
 
   
 
-    const { data: patientData, loading: patientLoading, error: patientError } = useQuery(GET_PATIENTS)
+    const { data: patientData, loading: patientLoading, error: patientError } = useQuery(GET_PATIENTS, queryOptions)
 
-    const { data: doctorData, loading: doctorLoading, error: doctorError } = useQuery(GET_DOCTORS) 
+    const { data: doctorData, loading: doctorLoading, error: doctorError } = useQuery(GET_DOCTORS, queryOptions) 
 
 
     const [ loadAppointments, { called, loading: apptLoading , error: apptError, data: apptData}] = useLazyQuery(GET_APPTS, queryOptions)
+    
 
     useEffect(()=> {
       loadAppointments(queryOptions)
@@ -46,13 +47,20 @@ const Home = () => {
     const handleVarChange = () => {
       
       if (selectedDoctorQuery){
-        queryOptions.variables.params.consulting_doctor = selectedDoctorQuery
+        queryOptions.variables.params.consulting_doctor = {
+          "_eq": selectedDoctorQuery
+        }
       }
       if (selectedPatientQuery) {
-        queryOptions.variables.params.visiting_patient = selectedPatientQuery
+        queryOptions.variables.params.visiting_patient = {
+          "_eq": selectedPatientQuery
+        }
       }
-      if (selectedDateTime) {
-        queryOptions.variables.params.appt_datetime = selectedDateTime
+      if (selectedDate) {
+        console.log(selectedDate)
+        queryOptions.variables.params.appt_date = {
+          "_eq": selectedDate.toLocaleString().split(',')[0]
+        }
       }
 
       console.log(queryOptions)
@@ -83,8 +91,8 @@ const Home = () => {
                     <strong>Appointment System</strong>
                   </Typography>
                   <DateCombo
-                    date={selectedDateTime}
-                    setDate={setSelectedDateTime}
+                    date={selectedDate}
+                    setDate={setSelectedDate}
                   />
                   <PatientCombo 
                     data={patientData} 

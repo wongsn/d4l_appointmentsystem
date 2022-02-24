@@ -6,12 +6,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 
-const createData = (appt_id, dr_name, patient_name, datetime) => {
+const createData = (appt_id, dr_name, patient_name, date, time) => {
   return {
     appt_id,
     dr_name,
     patient_name,
-    datetime
+    date, 
+    time
   };
 }
 
@@ -66,10 +67,16 @@ const headCells = [
     label: 'Name of Patient',
   },
   {
-    id: 'appt datetime',
+    id: 'appt date',
     numeric: false,
     disablePadding: false,
-    label: 'Appt DateTime',
+    label: 'Appt Date',
+  },
+  {
+    id: 'appt time',
+    numeric: false,
+    disablePadding: false,
+    label: 'Appt Time',
   },
 ];
 
@@ -185,9 +192,12 @@ EnhancedTableToolbar.propTypes = {
 };
 
 const ApptTable = ({ data }) => {
+
+  console.log(data)
+  
   
   const [order, setOrder] = useState('asc');
-  const [orderBy, setOrderBy] = useState('calories');
+  const [orderBy, setOrderBy] = useState('date');
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(false);
@@ -197,13 +207,15 @@ const ApptTable = ({ data }) => {
 
   useEffect(()=> {
     if(data) {
+      console.log(data)
       const appts = data.appointment
       appts.forEach(appt => {
         setRows([createData(
           appt.appointment_id,
           appt.doctorByConsultingDoctor.doctor_name,
           appt.patientByVisitingPatient.patient_name,
-          appt.appt_datetime
+          appt.appt_date,
+          appt.appt_time
         )])
       })
 
@@ -326,7 +338,8 @@ const ApptTable = ({ data }) => {
                       </TableCell>
                       <TableCell align="right">{row.dr_name}</TableCell>
                       <TableCell align="right">{row.patient_name}</TableCell>
-                      <TableCell align="right">{row.datetime}</TableCell>
+                      <TableCell align="right">{row.date}</TableCell>
+                      <TableCell align="right">{row.time}</TableCell>
                     </TableRow>
                   );
                 })}

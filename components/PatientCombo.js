@@ -4,8 +4,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 
 export const PatientCombo = ({ data, selected, setPatient, query }) => {
 
-  const patientData = data.patient
-  const optionsArray = patientData.map(data => {
+  const patientData = data?.patient
+  const optionsArray = patientData?.map(data => {
     return `${data.patient_name} - ${data.patient_gender}${data.patient_age} (${data.patient_id})`
   })
 

@@ -101,7 +101,7 @@ const UploadFile = () => {
         onClick={handleInputClick}
       >
         Upload File (.csv, .xlsx, .xls)
-        </Button>
+      </Button>
     </>
   )
 }
